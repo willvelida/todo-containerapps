@@ -94,7 +94,7 @@ jobs:
           login-server: ${{ steps.getacrcreds.outputs.loginServer }}
           username: ${{ steps.getacrcreds.outputs.loginName }}
           password: ${{ steps.getacrcreds.outputs.password }}
-        run: |
+      - run: |
           docker build . -t ${{ steps.getacrcreds.outputs.acrName }}/todoapi:${{ github.sha }}
           docker push ${{ steps.getacrcreds.outputs.acrName }}/todoapi:${{ github.sha }}
 
