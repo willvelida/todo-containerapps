@@ -135,6 +135,10 @@ resource api 'Microsoft.ApiManagement/service/apis@2021-12-01-preview' = {
     format: 'swagger-json'
     type: 'http'
     serviceUrl: 'https://${todoApi.properties.configuration.ingress.fqdn}'
+    protocols: [
+      'http'
+      'https'
+    ]
   }
 }
 
