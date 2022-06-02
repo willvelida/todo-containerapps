@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     push:
     paths:
-      - "./src/Todo.API"
+      - "./src/Todo.API/*"
 
 jobs:
   build-api-image:

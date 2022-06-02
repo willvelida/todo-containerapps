@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "./deploy"
+      - "./deploy/*"
 
 jobs:
   lint:
@@ -59,7 +59,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: Production
-    needs: validate
+    needs: preview
     steps:
       - uses: actions/checkout@v2
 
