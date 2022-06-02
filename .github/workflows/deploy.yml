@@ -61,14 +61,18 @@ jobs:
           template: ./deploy/main.bicep
           deploymentMode: Incremental
 
+      - name: Get ACR name
+        id: getacrname
+        run: |
+          acrName=$(az acr list --resource-group ${{ secrets.AZURE_RG }} --query "[0].name" -o tsv)
+          echo "::set-output name=acrName::$acrName"
+
       - name: Get ACR Credentials
         id: getacrcreds
         run: |
-          acrName=$(az acr list --resource-group ${{ secrets.AZURE_RG }} --query "[0].name" -o tsv)
           loginServer=$(az acr list --resource-group ${{ secrets.AZURE_RG }} --query "[0].loginServer" -o tsv)
-          loginName=$(az acr credential show -n $acrName --query username -o tsv)
-          password=$(az acr credential show -n $acrName --query "passwords[0].value" -o tsv)
-          echo "::set-output name=acrName::$acrName"
+          loginName=$(az acr credential show -n ${{ steps.acrname.outputs.acrName }} --resource-group ${{ secrets.AZURE_RG }} --query username -o tsv)
+          password=$(az acr credential show -n ${{ steps.acrname.outputs.acrName }} --resource-group ${{ secrets.AZURE_RG }} --query "passwords[0].value" -o tsv)
           echo "::set-output name=loginServer::$loginServer"
           echo "::set-output name=loginName::$loginName"
           echo "::set-output name=password::$password"
@@ -95,8 +99,8 @@ jobs:
           username: ${{ steps.getacrcreds.outputs.loginName }}
           password: ${{ steps.getacrcreds.outputs.password }}
       - run: |
-          docker build . -t ${{ steps.getacrcreds.outputs.acrName }}/todoapi:${{ github.sha }}
-          docker push ${{ steps.getacrcreds.outputs.acrName }}/todoapi:${{ github.sha }}
+          docker build . -t ${{ steps.getacrcreds.outputs.loginServer }}/todoapi:${{ github.sha }}
+          docker push ${{ steps.getacrcreds.outputs.loginServer }}/todoapi:${{ github.sha }}
 
   deploy-api:
     runs-on: ubuntu-latest
