@@ -114,6 +114,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Get ACR Login Server
+        id: getacrserver
+        run: |
+          loginServer=$(az acr list --resource-group ${{ secrets.AZURE_RG }} --query "[0].loginServer" -o tsv)
+          echo "::set-output name=loginServer::$loginServer"
+
       - name: 'Deploy Container App'
         uses: Azure/cli@v1
         with:
@@ -121,6 +127,6 @@ jobs:
             echo "Installing containerapp extension"
             az extension add -n containerapp --yes
             echo "Starting Deploying"
-            az containerapp update -n wvtodo-api -g ${{ secrets.AZURE_RG }} -i ${{ steps.getacrcreds.outputs.loginServer }}/todoapi:${{ github.sha }} --debug
+            az containerapp update -n wvtodo-api -g ${{ secrets.AZURE_RG }} -i ${{ steps.getacrserver.outputs.loginServer }}/todoapi:${{ github.sha }} --debug
 
     
