@@ -96,7 +96,7 @@ jobs:
         uses: azure/docker-login@v1
         with:
           login-server: ${{ steps.getacrcreds.outputs.loginServer }}
-          username: ${{ steps.getacrcreds.outputs.loginName }}
+          username: ${{ steps.getacrname.outputs.acrName }}
           password: ${{ steps.getacrcreds.outputs.password }}
       - run: |
           docker build . -t ${{ steps.getacrcreds.outputs.loginServer }}/todoapi:${{ github.sha }}
